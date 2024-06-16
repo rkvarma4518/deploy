@@ -21,7 +21,7 @@ FROM openjdk:11-jdk-slim
 WORKDIR /app
 
 # Copy the packaged JAR file from the build stage
-COPY --from=build /app/target/hello-world-app.jar /app/hello-world-app.jar
+COPY target/hello-world-0.0.1-SNAPSHOT.war /app/hello-world-app.jar
 
 # Expose the port the application runs on
 EXPOSE 8080
