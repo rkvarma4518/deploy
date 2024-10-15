@@ -29,3 +29,11 @@ stages:
         Dockerfile: 'Dockerfile'
         tags: |
           latest
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Build Artifacts
+      inputs:
+        # Folder that contains build artifacts (can be logs or any build output files)
+        pathToPublish: '$(Build.ArtifactStagingDirectory)'  
+        artifactName: 'dockerBuildLogs'
+        publishLocation: 'Container'
