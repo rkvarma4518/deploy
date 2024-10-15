@@ -26,7 +26,7 @@ stages:
         containerRegistry: 'dep-docker'
         repository: 'rkvarma4518/dep-docker'
         command: 'buildAndPush'
-        Dockerfile: 'Dockerfile'
+        Dockerfile: '**/Dockerfile'
         tags: |
           latest
 
