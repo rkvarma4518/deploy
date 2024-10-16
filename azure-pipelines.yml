@@ -22,7 +22,7 @@ steps:
 # Step 2: Pull the Docker image from DockerHub
 - script: |
     docker pull $(imageName):$(imageVersion)
-    docker tag $(imageName):$(imageVersion) $(azureRegistry)/$(imageName):$(imageVersion)
+    docker tag $(imageName):$(imageVersion) $(azureRegistry).azurecr.io/$(imageName):$(imageVersion)
   displayName: 'Pull and Tag Docker Image'
 
 # Step 3: Log in to Azure Container Registry (ACR)
@@ -35,7 +35,7 @@ steps:
 - task: Docker@2
   inputs:
     containerRegistry: '$(ACRServiceConnection)'  # Your ACR service connection name
-    repository: '$(azureRegistry)/$(imageName)'  # ACR repository path
+    repository: '$(azureRegistry).azurecr.io/$(imageName)'  # ACR repository path
     command: 'push'
     tags: '$(imageVersion)'
   displayName: 'Push Docker Image to ACR'
