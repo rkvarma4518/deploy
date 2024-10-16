@@ -9,7 +9,6 @@ variables:
   ACRServiceConnection: 'azure-registry'  # Name of your ACR service connection
   azureRegistry: 'depdocker'              # Replace with your Azure Container Registry name
   imageName: 'hello-world'                           # Docker image name from DockerHub (e.g., 'nginx')
-  # ACRimageName: 'depdocker.azurecr.io/hello-world'                           # Docker image name for ACR (e.g., 'nginx')
   imageVersion: 'latest'                                   # Docker image version/tag from DockerHub (e.g., 'latest')
 
 steps:
