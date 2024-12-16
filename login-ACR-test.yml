@@ -25,9 +25,24 @@ stages:
     
     # Step 3: Tag the Docker Image
     - script: |
-        docker tag $ACR_NAME.azurecr.io/$IMAGE_NAME:latest $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:v1
+        docker tag $ACR_NAME.azurecr.io/$IMAGE_NAME:latest $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:latest
         docker images
       displayName: 'Tag Docker Image'
+
+    # Step 4: Save Images
+    - script: |
+        docker save -o hello-world.tar devdoc.azurecr.io/hello-world:latest
+        docker save -o hello-world-new.tar devdoc.azurecr.io/hello-world-new:latest
+      displayName: 'Save Docker Images'
+
+    # Step 5: Publish Images as Artifacts
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: $(System.DefaultWorkingDirectory)
+        artifact: docker-images
+      displayName: 'Upload Docker Images as Artifacts'
+
+
 
 # Stage 2: Push Docker Image to Destination ACR
 - stage: PushImage
@@ -35,15 +50,28 @@ stages:
   jobs:
   - job: PushImageJob
     steps:
-    # Step 1: Login to destination ACR using service connection
+    # Step 1: Download Artifacts
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: docker-images
+        path: $(System.DefaultWorkingDirectory)
+      displayName: 'Download Docker Images'
+
+    # Step 2: Load Docker Images
+    - script: |
+        docker load < hello-world.tar
+        docker load < hello-world-new.tar
+      displayName: 'Load Docker Images'
+
+    # Step 3: Login to destination ACR using service connection
     - task: Docker@2
       displayName: 'Login to Destination ACR'
       inputs:
         command: login
         containerRegistry: 'azure-registry-sc' # Name of the service connection
 
-    # Step 2: Push Docker Image
+    # Step 4: Push Docker Image
     - script: |
         docker images
-        docker push $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:v1
+        docker push $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:latest
       displayName: 'Push Docker Image'
