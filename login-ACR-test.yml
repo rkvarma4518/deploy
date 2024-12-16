@@ -26,7 +26,6 @@ stages:
     # Step 3: Tag the Docker Image
     - script: |
         docker tag $ACR_NAME.azurecr.io/$IMAGE_NAME:latest $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:v1
-        docker rmi devdoc.azurecr.io/hello-world:latest
         docker images
       displayName: 'Tag Docker Image'
 
@@ -45,5 +44,6 @@ stages:
 
     # Step 2: Push Docker Image
     - script: |
+        docker images
         docker push $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:v1
       displayName: 'Push Docker Image'
