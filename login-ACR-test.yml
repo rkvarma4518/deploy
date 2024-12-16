@@ -39,7 +39,7 @@ stages:
       displayName: 'Login to Destination ACR'
       inputs:
         command: login
-        containerRegistry: $ACR_ServiceConnection # Name of the service connection
+        containerRegistry: 'azure-registry-sc' # Name of the service connection
 
     # Step 2: Push Docker Image
     - script: |
