@@ -17,3 +17,8 @@ steps:
 - script: |
     docker pull $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
   displayName: 'Pull Docker Image'
+  
+# Step 3: Docker Image
+- script: |
+    docker images
+  displayName: 'Docker Image'
