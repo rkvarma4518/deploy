@@ -1,0 +1,16 @@
+trigger:
+- None
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+# Step 1: Login to ACR using username and password
+- script: |
+    echo "$ACR_PASSWORD" | docker login $ACR_NAME.azurecr.io -u $ACR_USERNAME --password-stdin
+  displayName: 'Login to ACR'
+
+# Step 2: Pull Docker Image
+- script: |
+    docker pull $ACR_NAME.azurecr.io/$IMAGE_NAME:<tag>
+  displayName: 'Pull Docker Image'
