@@ -3,22 +3,45 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
-  
+
 variables:
 - group: ACR-Vars
 
-steps:
-# Step 1: Login to ACR using username and password
-- script: |
-    echo "$ACR_PASSWORD" | docker login $ACR_NAME.azurecr.io -u $ACR_USERNAME --password-stdin
-  displayName: 'Login to ACR'
+stages:
+# Stage 1: Pull Docker Image from Source ACR
+- stage: PullImage
+  jobs:
+  - job: PullImageJob
+    steps:
+    # Step 1: Login to source ACR using username and password
+    - script: |
+        echo "$ACR_PASSWORD" | docker login $ACR_NAME.azurecr.io -u $ACR_USERNAME --password-stdin
+      displayName: 'Login to Source ACR'
+    
+    # Step 2: Pull Docker Image
+    - script: |
+        docker pull $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
+      displayName: 'Pull Docker Image'
+    
+    # Step 3: Tag the Docker Image
+    - script: |
+        docker tag $ACR_NAME.azurecr.io/$IMAGE_NAME:latest $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:latest
+      displayName: 'Tag Docker Image'
 
-# Step 2: Pull Docker Image
-- script: |
-    docker pull $ACR_NAME.azurecr.io/$IMAGE_NAME:latest
-  displayName: 'Pull Docker Image'
-  
-# Step 3: Docker Image
-- script: |
-    docker images
-  displayName: 'Docker Image'
+# Stage 2: Push Docker Image to Destination ACR
+- stage: PushImage
+  dependsOn: PullImage
+  jobs:
+  - job: PushImageJob
+    steps:
+    # Step 1: Login to destination ACR using service connection
+    - task: Docker@2
+      displayName: 'Login to Destination ACR'
+      inputs:
+        command: login
+        containerRegistry: $ACR_ServiceConnection # Name of the service connection
+
+    # Step 2: Push Docker Image
+    - script: |
+        docker push $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:latest
+      displayName: 'Push Docker Image'
