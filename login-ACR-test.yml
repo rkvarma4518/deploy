@@ -3,6 +3,9 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
+  
+variables:
+- group: ACR-Vars
 
 steps:
 # Step 1: Login to ACR using username and password
