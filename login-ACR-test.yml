@@ -26,6 +26,7 @@ stages:
     # Step 3: Tag the Docker Image
     - script: |
         docker tag $ACR_NAME.azurecr.io/$IMAGE_NAME:latest $DEST_ACR_NAME.azurecr.io/$DEST_IMAGE_NAME:latest
+        docker images
       displayName: 'Tag Docker Image'
 
 # Stage 2: Push Docker Image to Destination ACR
